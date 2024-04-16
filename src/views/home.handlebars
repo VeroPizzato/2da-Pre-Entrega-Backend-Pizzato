@@ -2,17 +2,31 @@
 
 <div class="container my-2 mx-auto text-center">
   <div class="row">
-    {{#each products}}
-    <div class="col-md-3 my-4">
-      <div class="card alturaCaja img-product">
-        <img src={{thumbnail}} class="card-img-top" alt={{title}} />
-        <div class="card-body">
-          <h6 class="card-text text-center mb-4">{{title}}</h6>
-          <h4 class="text-center">$ {{price}}</h4>          
-        </div>        
+    {{#each products.docs}}
+      <div class="col-md-3 my-4">
+        <div class="card alturaCaja img-product">
+          <img src={{thumbnail}} class="card-img-top" alt={{title}} />
+          <div class="card-body">
+            <h6 class="card-text text-center mb-4">{{title}}</h6>
+            <h4 class="text-center">$ {{price}}</h4>
+          </div>
+        </div>
       </div>
-    </div>
     {{/each}}
+    <div class="card-body">
+      {{#if products.hasPrevPage}}
+        <a
+          href="/products?page={{products.prevPage}}"
+          class="card-text text-center"
+        >Pagina Anterior</a>
+      {{/if}}
+      <p class="card-text text-center">{{products.page}}</p>
+      {{#if products.hasNextPage}}
+        <a
+          href="/products?page={{products.nextPage}}"
+          class="card-text text-center"
+        >Pagina Siguiente</a>
+      {{/if}}
+    </div>
   </div>
 </div>
-
