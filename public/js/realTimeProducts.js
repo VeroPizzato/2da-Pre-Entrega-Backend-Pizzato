@@ -10,7 +10,7 @@ socket.on('newProduct', (product) => {  // Agregar el nuevo producto al HTML
         <h6 class="card-text text-center">${product.title}</h6>
         <h4 class="text-center">$ ${product.price}</h4>
       </div>
-      <button class="btn btn-secondary text-center btn-eliminarProd" id="${product.id}">Eliminar</button>
+      <button class="btn btn-secondary text-center minarProd" id="${product.id}">Eliminar</button>
     </div>
   </div>`
 });

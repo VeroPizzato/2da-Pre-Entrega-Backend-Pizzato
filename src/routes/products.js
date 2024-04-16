@@ -147,10 +147,10 @@ router.get('/', async (req, res) => {
         let cantLimite = +req.query.limit || 10
         let page = +req.query.page || 1
         let category = req.query.category 
-        let availability = +req.query.availability // puede venir 1 (productos que tengan stock) o 0 (productos sin stock)
-        let sort = req.query.sort // puede venir "asc" o "desc"
+        let availability = +req.query.availability // puede venir disponibilidad 1 (productos que tengan stock) o 0 (productos sin stock)
+        let sort = req.query.sort // puede venir asc o desc
         
-        const productos = await ProductManager.getProducts()
+        const productos = await ProductManager.getProducts(req.query)
         let prodFiltrados = []
         if (cantLimite) {
             if (isNaN(cantLimite) || (cantLimite < 0)) {
