@@ -46,8 +46,10 @@ class CartManager {
 
     getCartByCId = async (cid) => {
         const cart = await CartModel.findOne({ id: cid }).populate('products._id')
-        if (cart)
+        if (cart){
+            console.log(JSON.stringify(cart, null, 4));
             return cart
+        }
         else {
             console.error(`Carrito con ID: ${cid} Not Found`)
             return

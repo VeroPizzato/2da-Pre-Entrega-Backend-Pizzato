@@ -30,25 +30,33 @@ class ProductManager {
 
     getProducts = async (filters) => {
         try {
-            
-            if (JSON.stringify(filters) === '{}') {  // vienen vacios los filtros             
-                let allProducts = await ProductModel.find()
-                allProducts = await ProductModel.paginate({}, {  lean: true })
-                return allProducts
-            }            
+            let filteredProducts = await ProductModel.find()
 
-            const { limit, page, category, availability, sort } = { limit: 10, page: 1, category: 'notebook', availability: 1, sort: 'asc', ...filters } // availability 1 (con stock) y 0 (sin stock)
+            if (JSON.stringify(filters) === '{}') {  // vienen vacios los filtros            
+                filteredProducts = await ProductModel.paginate({}, { lean: true })
+                return filteredProducts
+            }
 
-            let allProducts = await ProductModel.find()
+            // busqueda general, sin filtros, solo esta avanzando o retrocediendo por las paginas
+            const { page, ...restOfFilters } = filters
+
+            if (page && JSON.stringify(restOfFilters) === '{}') {
+                filteredProducts = await ProductModel.paginate({}, { page: page, lean: true })
+                // return filteredProducts.docs.map(d => d.toObject({ virtuals: true }))
+                return filteredProducts
+            }
+
+            if (!page) page = 1
+            const { limit, category, availability, sort } = { limit: 10, page: page, category: 'notebook', availability: 1, sort: 'asc', ...filters }
 
             if (availability == 1) {
-                allProducts = await ProductModel.paginate({ category: category, stock: { $gt: 0 }}, {}, { limit: limit, page: page, sort: { price: sort }, lean: true })
+                filteredProducts = await ProductModel.paginate({ category: category, stock: { $gt: 0 } }, {}, { limit: limit, page: page, sort: { price: sort }, lean: true })
             }
             else {
-                allProducts = await ProductModel.paginate({ category: category, stock: 0 }, {}, { limit: limit, page: page, sort: { price: sort }, lean: true })
-            }       
+                filteredProducts = await ProductModel.paginate({ category: category, stock: 0 }, {}, { limit: limit, page: page, sort: { price: sort }, lean: true })
+            }
 
-            return allProducts
+            return filteredProducts
             // return filteredProducts.map(d => d.toObject({ virtuals: true }))
         }
         catch (err) {
