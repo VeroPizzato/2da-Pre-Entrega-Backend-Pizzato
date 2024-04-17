@@ -1,5 +1,6 @@
 const express = require('express')
-const handlebars = require('express-handlebars')
+// const handlebars = require('express-handlebars')
+const handlebarsExpress = require('express-handlebars')
 const viewsRouter = require('./routes/views')
 const { Server } = require('socket.io')
 const mongoose = require('mongoose')
@@ -24,9 +25,16 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static(`${__dirname}/../public`))
 
 // configuramos handlebars 
-app.engine('handlebars', handlebars.engine())
-app.set('views', `${__dirname}/views`)
-app.set('view engine', 'handlebars')
+const handlebars = handlebarsExpress.create({
+    defaultLayout: "main",
+    handlebars: require("handlebars"),
+    runtimeOptions: {
+        allowProtoPropertiesByDefault: true
+    }
+})
+app.engine("handlebars", handlebars.engine)
+app.set("views" , `${__dirname}/views`)
+app.set("view engine", "handlebars")
 
 app.use('/api/products', productsRouter)
 app.use('/api/carts', cartsRouter)
