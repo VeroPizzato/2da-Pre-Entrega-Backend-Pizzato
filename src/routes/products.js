@@ -43,7 +43,7 @@ async function validarNuevoProducto(req, res, next) {
             return
         }
     }
-    const listadoProductos = await ProductManager.getProducts()
+    const listadoProductos = await ProductManager.getProducts(req.query)
     const codeIndex = listadoProductos.findIndex(e => e.code === product.code)
     if (codeIndex !== -1) {
         res.status(400).json({ error: "Codigo ya existente" })
@@ -67,7 +67,7 @@ async function validarProdActualizado(req, res, next) {
     const { title, description, price, thumbnail, code, stock, status, category } = req.body
     let idProd = +req.params.pid
 
-    const listadoProductos = await ProductManager.getProducts()
+    const listadoProductos = await ProductManager.getProducts(req.query)
     const codeIndex = listadoProductos.findIndex(e => e.id === idProd)
     if (codeIndex === -1) {
         res.status(400).json({ error: "Producto con ID:" + idProd + " not Found" })
@@ -141,28 +141,23 @@ async function validarProducto(req, res, next) {
     next()
 }
 
-router.get('/', async (req, res) => {
+router.get('/products', async (req, res) => {
     try {
-        const ProductManager = req.app.get('ProductManager')
-        let cantLimite = +req.query.limit || 10
-        let page = +req.query.page || 1
-        let category = req.query.category 
-        let availability = +req.query.availability // puede venir disponibilidad 1 (productos que tengan stock) o 0 (productos sin stock)
-        let sort = req.query.sort // puede venir asc o desc
+        const { limit, page, category, availability, sort } = { limit: 10, page: 1, category: "all", availability: 1, sort: "asc", ...filters}
         
-        const productos = await ProductManager.getProducts(req.query)
-        let prodFiltrados = []
-        if (cantLimite) {
-            if (isNaN(cantLimite) || (cantLimite < 0)) {
+        //verifico si hay que filtrar por límite
+        if (limit) {
+            if (isNaN(limit) || (limit < 0)) {
                 // HTTP 400 => hay un error en el request o alguno de sus parámetros
                 res.status(400).json({ error: "Invalid limit format" })
                 return
             }
-            prodFiltrados = productos.slice(0, cantLimite)
         }
-        else prodFiltrados = productos        
-        res.status(200).json(prodFiltrados)  // HTTP 200 OK
-        return
+        
+        const filteredProducts = await productManager.getProducts(req.query)
+
+        // HTTP 200 OK
+        return res.status(200).json(filteredProducts)
     }
     catch (err) {
         return res.status(500).json({

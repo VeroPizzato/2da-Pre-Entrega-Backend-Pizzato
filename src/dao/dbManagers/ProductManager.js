@@ -1,10 +1,10 @@
 const ProductModel = require('../models/products')
 
 class ProductManager {
- 
+
     static #ultimoIdProducto = 1
 
-    constructor() {}
+    constructor() { }
 
     inicialize = async () => {
         // No hacer nada
@@ -28,18 +28,46 @@ class ProductManager {
         return mayorID
     }
 
-    getProducts = async () => {
+    getProducts = async (filters) => {
         try {
-            const products = await ProductModel.find()
-            return products.map(d => d.toObject({ virtuals: true }))           
+            
+            if (!filters) {
+                let filteredProducts = await ProductModel.find()
+                filteredProducts = await ProductModel.paginate({}, {  lean: true })
+                return filteredProducts.docs.map(d => d.toObject({ virtuals: true }))
+            }
+
+            const { limit, page, category, availability, sort } = { limit: 8, page: 1, category: 'all', availability: 1, sort: 'asc', ...filters }
+
+            let filteredProducts = await ProductModel.find()
+
+            // verifico si hay que filtrar por category
+            if (category && category != "all") {
+                filteredProducts = await ProductModel.find({ category: category })
+            }
+
+            // verifico si hay que filtrar por availability
+            if (availability) {
+                if (availability == 1) {
+                    filteredProducts = await ProductModel.find({ stock: { $gte: 0 } })
+                }
+                else {
+                    filteredProducts = await ProductModel.find({ stock: 0 })
+                }
+            }
+
+            filteredProducts = await ProductModel.paginate({}, { limit: limit, page: page, sort: { price: sort }, lean: true })            
+
+            return filteredProducts
+            // return filteredProducts.map(d => d.toObject({ virtuals: true }))
         }
         catch (err) {
             return []
         }
     }
 
-    getProductById = async (idProd) => {       
-        const producto = await ProductModel.findOne({ id: idProd })       
+    getProductById = async (idProd) => {
+        const producto = await ProductModel.findOne({ id: idProd })
         if (producto)
             return producto
         else {
@@ -77,7 +105,7 @@ class ProductManager {
             stock,
             status,
             category
-        })       
+        })
     }
 
     updateProduct = async (prodId, producto) => {
