@@ -157,21 +157,18 @@ router.get('/', async (req, res) => {
             nextlink: products.hasNextPage ? `/products?page=${products.nextPage}` : null
         }
 
+        let status = 'success'
+        if (products.docs.length === 0) status = 'error'
         let objResult = {
-            status: 'success',
+            status,
             ...result
         }
 
         // HTTP 200 OK
         return res.status(200).json(objResult)
     }
-    catch (err) {
-        let objResult = {
-            status: 'error',
-            ...result
-        }
-        return res.status(500).json({
-            objResult
+    catch (err) {        
+        return res.status(500).json({error: err
         })
     }
 })
