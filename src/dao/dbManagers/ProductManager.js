@@ -13,8 +13,8 @@ class ProductManager {
             throw new Error('must connect to mongodb!')
         }
         else {
-            const products = await this.getProducts()
-            ProductManager.#ultimoIdProducto = this.#getNuevoIdInicio(products)
+            const products = await this.getProducts({})
+            ProductManager.#ultimoIdProducto = this.#getNuevoIdInicio(products.docs)
         }
     }
 

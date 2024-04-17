@@ -141,27 +141,37 @@ async function validarProducto(req, res, next) {
     next()
 }
 
-router.get('/products', async (req, res) => {
-    try {
-        const { limit, page, category, availability, sort } = { limit: 10, page: 1, category: "all", availability: 1, sort: "asc", ...filters}
-        
-        //verifico si hay que filtrar por límite
-        if (limit) {
-            if (isNaN(limit) || (limit < 0)) {
-                // HTTP 400 => hay un error en el request o alguno de sus parámetros
-                res.status(400).json({ error: "Invalid limit format" })
-                return
-            }
+router.get('/', async (req, res) => {
+    try {      
+        const ProductManager = req.app.get('ProductManager')  
+        const products = await ProductManager.getProducts(req.query)
+        const result = {            
+            payload: products.totalDocs,
+            totalPages: products.totalPages,
+            prevPage: products.prevPage,
+            nextPage: products.nextPage,
+            page: products.page,
+            hasPrevPage: products.hasPrevPage,
+            hasNextPage: products.hasNextPage,
+            prevLink: products.hasPrevPage ? <a href="/products?page=${products.prevPage}">Anterior</a> : null,
+            nextlink: products.hasNextPage ? <a href="/products?page=${products.nextPage}">Siguiente</a> : null
         }
-        
-        const filteredProducts = await productManager.getProducts(req.query)
+
+        let objResult = {
+            status: 'success',
+            ...result
+        }
 
         // HTTP 200 OK
-        return res.status(200).json(filteredProducts)
+        return res.status(200).json(objResult)
     }
     catch (err) {
+        let objResult = {
+            status: 'error',
+            ...result
+        }
         return res.status(500).json({
-            message: err.message
+            objResult
         })
     }
 })

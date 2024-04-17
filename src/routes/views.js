@@ -7,10 +7,7 @@ const { validarNuevoProducto } = require('./products')
 router.get('/products', async (req, res) => {
     try {
         const ProductManager = req.app.get('ProductManager')
-        let products = await ProductManager.getProducts(req.query)
-        // let page = +req.query.page || 1
-        // products = await productModel.paginate({}, {limit: 4, page, lean: true})  // el parametro lean convierte documento a objeto
-        //console.log(products)
+        let products = await ProductManager.getProducts(req.query)      
 
         res.render('home', {
             title: 'Home',

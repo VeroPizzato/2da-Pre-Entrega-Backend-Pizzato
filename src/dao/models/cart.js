@@ -12,6 +12,11 @@ const cartCollection = 'carts';
 // });
 
 const cartSchema = new mongoose.Schema({
+    id: {
+        type: Number,
+        require: true,
+        unique: true
+    },
     arrayCart: {
         type: [
             {
@@ -31,4 +36,4 @@ const cartSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model(cartCollection, cartSchema);
+module.exports = mongoose.model('Cart', cartSchema, cartCollection);
