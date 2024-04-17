@@ -107,16 +107,80 @@ router.post('/:cid/product/:pid', ValidarCarritoExistente, ValidarProductoExiste
     }
 })
 
+router.put('/:cid', ValidarCarritoExistente, async (req, res) => {
+    try {
+        const CartManager = req.app.get('CartManager')
+        let cartId = +req.params.cid;
+        const { products } = req.body;
+
+        await CartManager.updateCartProducts(cartId, products);
+
+        // HTTP 200 OK 
+        res.status(200).json(`Los productos del carrito con ID ${cartId} se actualizaron exitosamente.`)
+    }
+    catch (err) {
+        return res.status(500).json({ message: err.message })
+    }
+})
+
+router.put('/:cid/products/:pid', ValidarCarritoExistente, ValidarProductoExistente, async (req, res) => {
+    try {
+        const CartManager = req.app.get('CartManager')
+        let cartId = +req.params.cid;
+        let prodId = +req.params.pid;
+        const quantity = +req.body.quantity;        
+
+        const result = await CartManager.addProductToCart(cartId, prodId, quantity);
+
+        if (result)
+            // HTTP 200 OK 
+            res.status(200).json(`Se agregaron ${quantity} producto/s con ID ${prodId} al carrito con ID ${cartId}.`)
+        else {
+            //HTTP 400 
+            res.status(400).json({ error: "Sintaxis incorrecta!" })
+        }        
+    }
+    catch (err) {
+        return res.status(500).json({ message: err.message })
+    }
+})
+
 router.delete('/:cid', ValidarCarritoExistente, async (req, res) => {
     try {
         const CartManager = req.app.get('CartManager')
         let { cid } = req.params
-        await CartManager.deleteCart(cid)
-        res.status(200).json({ message: "Carrito eliminado correctamente" })  // HTTP 200 OK
+        // await CartManager.deleteCart(cid)
+        // res.status(200).json({ message: "Carrito eliminado correctamente" })  // HTTP 200 OK
+
+        await CartManager.deleteAllProductsCart(cid)
+
+        // HTTP 200 OK
+        res.status(200).json(`Se eliminaron todos los productos del carrito con ID ${cid}.`)
     } catch (err) {
         return res.status(500).json({
             message: err.message
         })
+    }
+})
+
+router.delete('/:cid/products/:pid', ValidarCarritoExistente, ValidarProductoExistente, async (req, res) => {
+    try {
+        const CartManager = req.app.get('CartManager')
+        let cartId = +req.params.cid;
+        let prodId = +req.params.pid;
+
+        const result = await CartManager.deleteProductCart(cartId, prodId);
+
+        if (result)
+            // HTTP 200 OK 
+            res.status(200).json(`Se eliminó el producto con ID ${prodId} del carrito con ID ${cartId}.`)
+        else {
+            // HTTP 400 
+            res.status(400).json({ error: "Sintaxis incorrecta!" })
+        }
+    }
+    catch (err) {
+        return res.status(500).json({ message: err.message })
     }
 })
 
