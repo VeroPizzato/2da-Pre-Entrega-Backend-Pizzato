@@ -97,36 +97,4 @@ router.get('/chat', (_, res) => {
 })
 
 
-// VER POPULATION !!
-router.get('/carts/:cid', async (req, res) => {
-    try {
-        const { cid } = req.params;        
-        let carrito = await cartModel.findOne({ _id: cid }).populate('arrayCart.productId');
-                
-        // //let totalCarrito = 0;
-        // const cartItems = carrito.arrayCart.map(item => {
-        //     //const subtotal = item.quantity * item.product.price;
-        //     //totalCarrito += subtotal;
-        //     return {
-        //         title: item.productId.title,
-        //         description : item.productId.description,
-        //         price: item.productId.price,
-        //         quantity: item.quantity,
-        //         id: item._id,
-        //         thumbnail: item.productId.thumbnail,
-        //         code: item.productId.code,
-        //         stock: item.productId.stock,
-        //         //subtotal: subtotal,
-        //     };
-        // });
-
-        // //console.log(cartItems, totalCarrito); 
-        // console.log(cartItems)     
-
-    } catch (error) {
-        console.log(error);
-    }
-});
-
-
 module.exports = router

@@ -45,7 +45,7 @@ class CartManager {
     }
 
     getCartByCId = async (cid) => {
-        const cart = await CartModel.findOne({ id: cid })//.populate('products.productId')
+        const cart = await CartModel.findOne({ id: cid }).populate('products._id')
         if (cart)
             return cart
         else {
@@ -64,10 +64,10 @@ class CartManager {
     addProductToCart = async (cid, pid, quantity) => {
         const cart = await this.getCartByCId(cid)
         const listadoProducts = cart.arrayCart;
-        const codeProduIndex = listadoProducts.findIndex(e => e.productId === pid);
+        const codeProduIndex = listadoProducts.findIndex(e => e.id === pid);
         if (codeProduIndex === -1) {
             let productoNuevo = {
-                productId: pid,
+                id: pid,
                 quantity: quantity
             }
             listadoProducts.push(productoNuevo);
