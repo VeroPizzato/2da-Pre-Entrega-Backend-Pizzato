@@ -45,15 +45,15 @@ class ProductManager {
                 // return filteredProducts.docs.map(d => d.toObject({ virtuals: true }))
                 return filteredProducts
             }
-
+           
             if (!page) page = 1
             const { limit, category, availability, sort } = { limit: 10, page: page, category: 'notebook', availability: 1, sort: 'asc', ...filters }
          
             if (availability == 1) {
-                filteredProducts = await ProductModel.paginate({ category: category, stock: { $gt: 0 } }, {}, { limit: limit, page: page, sort: { price: sort }, lean: true })
+                filteredProducts = await ProductModel.paginate({ category: category, stock: { $gt: 0 } }, { limit: limit, page: page, sort: { price: sort }, lean: true })
             }
             else {
-                filteredProducts = await ProductModel.paginate({ category: category, stock: 0 }, {}, { limit: limit, page: page, sort: { price: sort }, lean: true })
+                filteredProducts = await ProductModel.paginate({ category: category, stock: 0 }, { limit: limit, page: page, sort: { price: sort }, lean: true })
             }
 
             return filteredProducts
