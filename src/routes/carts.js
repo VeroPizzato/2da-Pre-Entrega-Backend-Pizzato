@@ -7,9 +7,9 @@ async function validarNuevoCarrito(req, res, next) {
     const ProductManager = req.app.get('ProductManager')
     const { products } = req.body
     products.forEach(async producto => {
-        const prod = await ProductManager.getProductById(producto.id)
+        const prod = await ProductManager.getProductById(producto._id)
         if (!prod) {
-            res.status(400).json({ error: "Producto con ID:" + producto.id + " not Found" })
+            res.status(400).json({ error: "Producto con ID:" + producto._id + " not Found" })
             return
         }
         if (isNaN(producto.quantity) || (!ProductManager.soloNumPositivos(producto.quantity))) {
@@ -23,7 +23,7 @@ async function validarNuevoCarrito(req, res, next) {
 // Middleware para validacion de carrito existente 
 async function ValidarCarritoExistente(req, res, next) {
     const CartManager = req.app.get('CartManager')
-    let cId = +req.params.cid
+    let cId = req.params.cid
     if (isNaN(cId)) {
         res.status(400).json({ error: "Invalid number format" })
         return
@@ -40,7 +40,7 @@ async function ValidarCarritoExistente(req, res, next) {
 // Middleware para validacion de producto existente 
 async function ValidarProductoExistente(req, res, next) {
     const ProductManager = req.app.get('ProductManager')
-    let pId = +req.params.pid
+    let pId = req.params.pid
     const prod = await ProductManager.getProductById(pId)
     if (!prod) {
         res.status(400).json({ error: "Producto con ID:" + pId + " not Found" })
@@ -90,11 +90,11 @@ router.post('/', validarNuevoCarrito, async (req, res) => {
     }
 })
 
-router.post('/:cid/product/:pid', ValidarCarritoExistente, ValidarProductoExistente, async (req, res) => {
+router.post('/:cid/products/:pid', ValidarCarritoExistente, ValidarProductoExistente, async (req, res) => {
     try {
         const CartManager = req.app.get('CartManager')
-        let idCart = +req.params.cid;
-        let idProd = +req.params.pid;
+        let idCart = req.params.cid;
+        let idProd = req.params.pid;
         let quantity = 1;
 
         await CartManager.addProductToCart(idCart, idProd, quantity);
@@ -110,7 +110,7 @@ router.post('/:cid/product/:pid', ValidarCarritoExistente, ValidarProductoExiste
 router.put('/:cid', ValidarCarritoExistente, async (req, res) => {
     try {
         const CartManager = req.app.get('CartManager')
-        let cartId = +req.params.cid;
+        let cartId = req.params.cid;
         const { products } = req.body;
 
         await CartManager.updateCartProducts(cartId, products);
@@ -126,8 +126,8 @@ router.put('/:cid', ValidarCarritoExistente, async (req, res) => {
 router.put('/:cid/products/:pid', ValidarCarritoExistente, ValidarProductoExistente, async (req, res) => {
     try {
         const CartManager = req.app.get('CartManager')
-        let cartId = +req.params.cid;
-        let prodId = +req.params.pid;
+        let cartId = req.params.cid;
+        let prodId = req.params.pid;
         const quantity = +req.body.quantity;        
 
         const result = await CartManager.addProductToCart(cartId, prodId, quantity);
@@ -148,7 +148,7 @@ router.put('/:cid/products/:pid', ValidarCarritoExistente, ValidarProductoExiste
 router.delete('/:cid', ValidarCarritoExistente, async (req, res) => {
     try {
         const CartManager = req.app.get('CartManager')
-        let cartId = +req.params.cid;
+        let cartId = req.params.cid;
         await CartManager.deleteCart(cid)
         res.status(200).json({ message: "Carrito eliminado correctamente" })  // HTTP 200 OK     
     } catch (err) {
@@ -161,8 +161,8 @@ router.delete('/:cid', ValidarCarritoExistente, async (req, res) => {
 router.delete('/:cid/products/:pid', ValidarCarritoExistente, ValidarProductoExistente, async (req, res) => {
     try {
         const CartManager = req.app.get('CartManager')
-        let cartId = +req.params.cid;
-        let prodId = +req.params.pid;
+        let cartId = req.params.cid;
+        let prodId = req.params.pid;
 
         const result = await CartManager.deleteProductCart(cartId, prodId);
 

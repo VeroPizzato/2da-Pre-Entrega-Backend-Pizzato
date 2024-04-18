@@ -66,7 +66,7 @@ class CartManager {
     addProductToCart = async (cid, pid, quantity) => {
         const cart = await this.getCartByCId(cid)
         const listadoProducts = cart.products;
-        const codeProduIndex = listadoProducts.findIndex(elem => elem._id === pid);
+        const codeProduIndex = listadoProducts.findIndex(elem => elem._id.toString() === pid);
         if (codeProduIndex === -1) {
             let productoNuevo = {
                 _id: pid,
@@ -90,12 +90,19 @@ class CartManager {
         await CartModel.deleteOne({ _id: cid });
     }  
 
+    clearCart = async (cid) => {
+        //obtengo el carrito
+        const cart = await this.getCartByCId(cid)
+        cart.products = []
+        await CartModel.updateOne({ _id: cid }, cart)
+    }
+
     deleteProductCart = async (cid, pid) => {
         //obtengo el carrito
         const cart = await this.getCartByCId(cid)
         //obtengo los productos del carrito        
         const productsFromCart = cart.products
-        const productIndex = productsFromCart.findIndex(item => item._id === pid)
+        const productIndex = productsFromCart.findIndex(item => item._id.toString() === pid)
         if (productIndex != -1) {
             //existe el producto en el carrito, puedo eliminarlo
             productsFromCart.splice(productIndex, 1)

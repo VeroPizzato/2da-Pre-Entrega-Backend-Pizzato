@@ -65,10 +65,10 @@ async function validarNuevoProducto(req, res, next) {
 async function validarProdActualizado(req, res, next) {
     const ProductManager = req.app.get('ProductManager')
     const { title, description, price, thumbnail, code, stock, status, category } = req.body
-    let idProd = +req.params.pid
+    let idProd = req.params.pid
 
     const listadoProductos = await ProductManager.getProducts(req.query)
-    const codeIndex = listadoProductos.findIndex(e => e.id === idProd)
+    const codeIndex = listadoProductos.findIndex(e => e._id.toString() === idProd)
     if (codeIndex === -1) {
         res.status(400).json({ error: "Producto con ID:" + idProd + " not Found" })
         return
@@ -128,7 +128,7 @@ async function validarProdActualizado(req, res, next) {
 // Middleware para validacion de datos de un producto 
 async function validarProducto(req, res, next) {
     const ProductManager = req.app.get('ProductManager')    
-    let prodId = +req.params.pid
+    let prodId = req.params.pid
     if (isNaN(prodId)) {
         res.status(400).json({ error: "Formato invalido." })
         return
@@ -178,7 +178,7 @@ router.get('/', async (req, res) => {
 router.get('/:pid', validarProducto, async (req, res) => {    
     try {        
         const ProductManager = req.app.get('ProductManager')
-        const prodId  = +req.params.pid        
+        const prodId  = req.params.pid        
         const producto = await ProductManager.getProductById(prodId)
         if (!producto) {
              res.status(404).json({ error: "Id inexistente!" })  // HTTP 404 => el ID es válido, pero no se encontró ese producto
@@ -202,7 +202,7 @@ router.post('/', validarNuevoProducto, async (req, res) => {
 router.put('/:pid', validarProducto, validarProdActualizado, async (req, res) => {
     try {
         const ProductManager = req.app.get('ProductManager')
-        const prodId = +req.params.pid        
+        const prodId = req.params.pid        
         const datosAUpdate = req.body
         // if (isNaN(prodId)){
         //     res.status(400).json({ error: "Invalid number format" })
@@ -225,7 +225,7 @@ router.put('/:pid', validarProducto, validarProdActualizado, async (req, res) =>
 router.delete('/:pid', validarProducto, async (req, res) => {
     try {
         const ProductManager = req.app.get('ProductManager')
-        const prodId = +req.params.pid       
+        const prodId = req.params.pid       
         const producto = await ProductManager.getProductById(prodId)
         if (!producto) {
             res.status(404).json({ error: "Id inexistente!" })  // HTTP 404 => el ID es válido, pero no se encontró ese producto
