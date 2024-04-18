@@ -9,17 +9,27 @@
           <div class="card-body">
             <h6 class="card-text text-center mb-4">{{title}}</h6>
             <h4 class="text-center">$ {{price}}</h4>
+            <a
+              href="/products/detail/{{_id}}"
+              class="btn btn-secondary text-decoration text-center"
+            >Ver Detalle</a>
           </div>
         </div>
       </div>
     {{/each}}
     <div class="card-body">
       {{#if products.hasPrevPage}}
-        <a href="/products?page={{products.prevPage}}" class="btn btn-primary text-center">Pagina Anterior</a>
+        <a
+          href="/products?page={{products.prevPage}}"
+          class="btn btn-primary text-center"
+        >Pagina Anterior</a>
       {{/if}}
       <p class="text-center"><strong>{{products.page}}</strong></p>
       {{#if products.hasNextPage}}
-        <a href="/products?page={{products.nextPage}}" class="btn btn-primary text-center">Pagina Siguiente</a>
+        <a
+          href="/products?page={{products.nextPage}}"
+          class="btn btn-primary text-center"
+        >Pagina Siguiente</a>
       {{/if}}
     </div>
   </div>

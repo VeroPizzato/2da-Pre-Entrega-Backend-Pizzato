@@ -36,6 +36,9 @@ app.engine("handlebars", handlebars.engine)
 app.set("views" , `${__dirname}/views`)
 app.set("view engine", "handlebars")
 
+app.use('/products/detail', express.static(`${__dirname}/../public`));  // para encontrar la carpeta public
+app.use('/carts', express.static(`${__dirname}/../public`));
+
 app.use('/api/products', productsRouter)
 app.use('/api/carts', cartsRouter)
 app.use('/', viewsRouter)
@@ -113,9 +116,9 @@ const main = async () => {
         clientSocket.on('deleteProduct', async (productId) => {
             try {               
                 const id = parseInt(productId);               
-                if (isNaN(id)) {
-                    throw new Error('Invalid productId: ' + productId);
-                }                
+                // if (isNaN(id)) {
+                //     throw new Error('Invalid productId: ' + productId);
+                // }                
                 await ProductManager.deleteProduct(id);
                 // Emitir evento 'productDeleted' a los clientes
                 io.emit('productDeleted', id);

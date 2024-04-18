@@ -4,11 +4,11 @@
             <img src={{product.thumbnail}} alt={{product.title}} class="img-fluid"/>           
         </div>
         <div class="col-md-5 text-center">
-            <h2>{{product.title}}</h2>
-            <p>{{product.descripcion}}</p>
-            <h3>$ {{product.price.toLocaleString()}}</h3>
+            <h2>{{product.title}}</h2>            
+            <h3>$ {{product.price}}</h3>
             <h5>Stock Disponible: {{product.stock}}</h5>
-            <button class="btn btn-secondary" type="submit">Agregar al Carrito</button>
+            <p>{{product.description}}</p>
+            <a href="/products/addCart/{{product._id}}" class="btn btn-secondary text-decoration text-center">Agregar al Carrito</a>
         </div>
     </div>
 </div>

@@ -129,10 +129,10 @@ async function validarProdActualizado(req, res, next) {
 async function validarProducto(req, res, next) {
     const ProductManager = req.app.get('ProductManager')    
     let prodId = req.params.pid
-    if (isNaN(prodId)) {
-        res.status(400).json({ error: "Formato invalido." })
-        return
-    }
+    // if (isNaN(prodId)) {
+    //     res.status(400).json({ error: "Formato invalido." })
+    //     return
+    // }
     const producto = await ProductManager.getProductById(prodId)
     if (!producto) {
         res.status(404).json({ error: "Id inexistente!" })  // HTTP 404 => el ID es válido, pero no se encontró ese producto

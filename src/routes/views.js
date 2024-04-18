@@ -5,7 +5,7 @@ const { validarNuevoProducto } = require('./products')
 router.get('/products', async (req, res) => {
     try {
         const ProductManager = req.app.get('ProductManager')
-        let products = await ProductManager.getProducts(req.query)      
+        let products = await ProductManager.getProducts(req.query)
 
         res.render('home', {
             title: 'Home',
@@ -14,6 +14,44 @@ router.get('/products', async (req, res) => {
         })
     } catch (error) {
         console.error('Error al al cargar los productos:', error)
+    }
+})
+
+router.get('/products/detail/:pid', async (req, res) => {
+    try {
+        const ProductManager = req.app.get('ProductManager')
+
+        const prodId = req.params.pid
+        const product = await ProductManager.getProductById(prodId)
+
+        let data = {
+            title: 'Product Detail',
+            scripts: ['productoDetail.js'],
+            useSweetAlert: true,
+            styles: ['productos.css'],
+            useWS: false,
+            product
+        }
+
+        res.render('detail', data)
+    }
+    catch (err) {
+        return res.status(500).json({ message: err.message })
+    }
+})
+
+router.get('/products/addCart/:pid', async (req, res) => {
+    try {
+        const CartManager = req.app.get('CartManager')        
+        const prodId = req.params.pid        
+        //agrego una unidad del producto al primer carrito que siempre existe
+        const carts = await CartManager.getCarts()
+        // console.log(JSON.stringify(carts, null, '\t'))     
+        console.log(prodId)
+        await CartManager.addProductToCart(carts[0]._id, prodId, 1);       
+    }
+    catch (err) {
+        return res.status(500).json({ message: err.message })
     }
 })
 
@@ -53,9 +91,9 @@ router.post('/realtimeproducts', validarNuevoProducto, async (req, res) => {
             product.code,
             +product.stock,
             boolStatus,
-            product.category)      
+            product.category)
         // Notificar a los clientes mediante WS que se agrego un producto nuevo             
-        req.app.get('ws').emit('newProduct', product)        
+        req.app.get('ws').emit('newProduct', product)
         res.redirect('/realtimeproducts')
         // res.status(201).json({ message: "Producto agregado correctamente" })
     } catch (error) {

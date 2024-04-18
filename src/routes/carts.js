@@ -24,10 +24,10 @@ async function validarNuevoCarrito(req, res, next) {
 async function ValidarCarritoExistente(req, res, next) {
     const CartManager = req.app.get('CartManager')
     let cId = req.params.cid
-    if (isNaN(cId)) {
-        res.status(400).json({ error: "Invalid number format" })
-        return
-    }
+    // if (isNaN(cId)) {
+    //     res.status(400).json({ error: "Invalid number format" })
+    //     return
+    // }
     const cart = await CartManager.getCartByCId(cId)
     if (!cart) {
         res.status(400).json({ error: "Carrito con ID:" + cId + " not Found" })
