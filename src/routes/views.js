@@ -47,7 +47,8 @@ router.get('/products/addCart/:pid', async (req, res) => {
         //agrego una unidad del producto al primer carrito que siempre existe
         const carts = await CartManager.getCarts()
         // console.log(JSON.stringify(carts, null, '\t'))     
-        await CartManager.addProductToCart(carts[0]._id, prodId, 1);       
+        await CartManager.addProductToCart(carts[0]._id, prodId, 1); 
+        res.redirect(`/products/detail/${prodId}`)  
     }
     catch (err) {
         return res.status(500).json({ message: err.message })

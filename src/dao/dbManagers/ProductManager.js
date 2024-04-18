@@ -38,7 +38,7 @@ class ProductManager {
             }
 
             // busqueda general, sin filtros, solo esta avanzando o retrocediendo por las paginas
-            const { page, ...restOfFilters } = filters
+            let { page, ...restOfFilters } = filters
 
             if (page && JSON.stringify(restOfFilters) === '{}') {
                 filteredProducts = await ProductModel.paginate({}, { page: page, lean: true })
@@ -48,7 +48,7 @@ class ProductManager {
 
             if (!page) page = 1
             const { limit, category, availability, sort } = { limit: 10, page: page, category: 'notebook', availability: 1, sort: 'asc', ...filters }
-
+         
             if (availability == 1) {
                 filteredProducts = await ProductModel.paginate({ category: category, stock: { $gt: 0 } }, {}, { limit: limit, page: page, sort: { price: sort }, lean: true })
             }
