@@ -5,8 +5,8 @@ const router = Router()
 // // Middleware para validacion de datos al agregar un carrito 
 async function validarNuevoCarrito(req, res, next) {
     const ProductManager = req.app.get('ProductManager')
-    const { arrayCart } = req.body
-    arrayCart.forEach(async producto => {
+    const { products } = req.body
+    products.forEach(async producto => {
         const prod = await ProductManager.getProductById(producto.id)
         if (!prod) {
             res.status(400).json({ error: "Producto con ID:" + producto.id + " not Found" })
@@ -79,8 +79,8 @@ router.get('/:cid', ValidarCarritoExistente, async (req, res) => {
 router.post('/', validarNuevoCarrito, async (req, res) => {
     try {
         const CartManager = req.app.get('CartManager')
-        let { arrayCart } = req.body
-        await CartManager.addCart(arrayCart)
+        let { products } = req.body
+        await CartManager.addCart(products)
         res.status(201).json({ message: "Carrito agregado correctamente" })  // HTTP 201 OK      
 
     } catch (err) {
@@ -148,14 +148,9 @@ router.put('/:cid/products/:pid', ValidarCarritoExistente, ValidarProductoExiste
 router.delete('/:cid', ValidarCarritoExistente, async (req, res) => {
     try {
         const CartManager = req.app.get('CartManager')
-        let { cid } = req.params
-        // await CartManager.deleteCart(cid)
-        // res.status(200).json({ message: "Carrito eliminado correctamente" })  // HTTP 200 OK
-
-        await CartManager.deleteAllProductsCart(cid)
-
-        // HTTP 200 OK
-        res.status(200).json(`Se eliminaron todos los productos del carrito con ID ${cid}.`)
+        let cartId = +req.params.cid;
+        await CartManager.deleteCart(cid)
+        res.status(200).json({ message: "Carrito eliminado correctamente" })  // HTTP 200 OK     
     } catch (err) {
         return res.status(500).json({
             message: err.message

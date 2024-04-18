@@ -45,9 +45,9 @@ class CartManager {
     }
 
     getCartByCId = async (cid) => {
-        const cart = await CartModel.findOne({ id: cid }).populate('products._id')
+        const cart = await CartModel.findOne({ _id: cid }).populate('products._id')
         if (cart){
-            console.log(JSON.stringify(cart, null, 4));
+            // console.log(JSON.stringify(cart, null, 4));
             return cart
         }
         else {
@@ -56,57 +56,50 @@ class CartManager {
         }
     }
 
-    addCart = async (arrayCart) => {
+    addCart = async (products) => {
         let nuevoCarrito = await CartModel.create({
             id: this.#getNuevoId(),
-            arrayCart
+            products
         })       
     }
 
     addProductToCart = async (cid, pid, quantity) => {
         const cart = await this.getCartByCId(cid)
-        const listadoProducts = cart.arrayCart;
-        const codeProduIndex = listadoProducts.findIndex(e => e.id === pid);
+        const listadoProducts = cart.products;
+        const codeProduIndex = listadoProducts.findIndex(elem => elem._id === pid);
         if (codeProduIndex === -1) {
             let productoNuevo = {
-                id: pid,
+                _id: pid,
                 quantity: quantity
             }
             listadoProducts.push(productoNuevo);
         } else {
             listadoProducts[codeProduIndex].quantity += quantity;
         }
-        await CartModel.updateOne({ id: cid }, cart)
+        await CartModel.updateOne({ _id: cid }, cart)
     }
 
     updateCartProducts = async (cid, products) => {
         //obtengo el carrito
         const cart = await this.getCartByCId(cid)
         cart.products = products
-        await CartModel.updateOne({ id: cid }, cart)
+        await CartModel.updateOne({ _id: cid }, cart)
     }
 
-    // deleteCart = async (cid) => {
-    //     await CartModel.deleteOne({ id: cid });
-    // }
-
-    deleteAllProductsCart = async (cid) => {
-        //obtengo el carrito
-        const cart = await this.getCartByCId(cartId)
-        cart.products = []
-        await CartModel.updateOne({ id: cid }, cart)
-    }
+    deleteCart = async (cid) => {
+        await CartModel.deleteOne({ _id: cid });
+    }  
 
     deleteProductCart = async (cid, pid) => {
         //obtengo el carrito
         const cart = await this.getCartByCId(cid)
         //obtengo los productos del carrito        
         const productsFromCart = cart.products
-        const productIndex = productsFromCart.findIndex(item => item.id === pid)
+        const productIndex = productsFromCart.findIndex(item => item._id === pid)
         if (productIndex != -1) {
             //existe el producto en el carrito, puedo eliminarlo
             productsFromCart.splice(productIndex, 1)
-            await CartModel.updateOne({ id: cid }, cart)
+            await CartModel.updateOne({ _id: cid }, cart)
             return true
         }
         else {

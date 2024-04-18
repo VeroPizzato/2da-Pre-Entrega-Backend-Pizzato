@@ -65,7 +65,7 @@ class ProductManager {
     }
 
     getProductById = async (idProd) => {
-        const producto = await ProductModel.findOne({ id: idProd })
+        const producto = await ProductModel.findOne({ _id: idProd })
         if (producto)
             return producto
         else {
@@ -107,11 +107,11 @@ class ProductManager {
     }
 
     updateProduct = async (prodId, producto) => {
-        await ProductModel.updateOne({ id: prodId }, producto)
+        await ProductModel.updateOne({ _id: prodId }, producto)
     }
 
     deleteProduct = async (idProd) => {
-        await ProductModel.deleteOne({ id: idProd })
+        await ProductModel.deleteOne({ _id: idProd })
     }
 }
 

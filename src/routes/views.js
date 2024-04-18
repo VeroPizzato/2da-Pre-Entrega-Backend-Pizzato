@@ -1,7 +1,5 @@
 const { Router } = require('express')
 const router = Router()
-const productModel = require('../dao/models/products')
-const cartModel = require('../dao/models/cart')
 const { validarNuevoProducto } = require('./products')
 
 router.get('/products', async (req, res) => {
@@ -18,20 +16,6 @@ router.get('/products', async (req, res) => {
         console.error('Error al al cargar los productos:', error)
     }
 })
-
-// router.get('/home', async (req, res) => {
-//     try {
-//         const ProductManager = req.app.get('ProductManager')
-//         const products = await ProductManager.getProducts(req.query)
-//         res.render('home', {
-//             title: 'Home',
-//             styles: ['productos.css'],
-//             products
-//         })
-//     } catch (error) {
-//         console.error('Error al al cargar los productos:', error)
-//     }
-// })
 
 router.get('/realtimeproducts', async (req, res) => {
     try {
