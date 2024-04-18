@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
-    document.querySelector(".btn-confirmar").addEventListener("click", function () {
+    const btn = document.getElementById("btn-addCart")
+    btn.addEventListener("click", function () {
         // Muestro mensaje alerta que se agrego producto al carrito
         Swal.fire({
             icon: "success",

@@ -63,10 +63,10 @@ class CartManager {
         })       
     }
 
-    addProductToCart = async (cid, pid, quantity) => {
+    addProductToCart = async (cid, pid, quantity) => {     
         const cart = await this.getCartByCId(cid)
-        const listadoProducts = cart.products;
-        const codeProduIndex = listadoProducts.findIndex(elem => elem._id.toString() === pid);
+        const listadoProducts = cart.products;       
+        const codeProduIndex = listadoProducts.findIndex(elem => elem._id._id.toString() === pid);        
         if (codeProduIndex === -1) {
             let productoNuevo = {
                 _id: pid,
