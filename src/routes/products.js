@@ -43,8 +43,10 @@ async function validarNuevoProducto(req, res, next) {
             return
         }
     }
-    const listadoProductos = await ProductManager.getProducts(req.query)
+    const listadoProductos = await ProductManager.getProducts(req.query)  
     const codeIndex = listadoProductos.findIndex(e => e.code === product.code)
+    console.log(e.code)
+    console.log(product.code)
     if (codeIndex !== -1) {
         res.status(400).json({ error: "Codigo ya existente" })
         return
