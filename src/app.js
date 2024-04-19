@@ -114,14 +114,10 @@ const main = async () => {
 
         // Escucho el evento 'deleteProduct' emitido por el cliente
         clientSocket.on('deleteProduct', async (productId) => {
-            try {               
-                const id = parseInt(productId);               
-                // if (isNaN(id)) {
-                //     throw new Error('Invalid productId: ' + productId);
-                // }                
-                await ProductManager.deleteProduct(id);
+            try {             
+                await ProductManager.deleteProduct(productId);
                 // Emitir evento 'productDeleted' a los clientes
-                io.emit('productDeleted', id);
+                io.emit('productDeleted', productId);
             } catch (error) {
                 console.error('Error deleting product:', error);
             }

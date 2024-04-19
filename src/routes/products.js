@@ -44,7 +44,7 @@ async function validarNuevoProducto(req, res, next) {
         }
     }
     const listadoProductos = await ProductManager.getProducts(req.query)   
-    const codeIndex = listadoProductos.findIndex(e => e.code === product.code)  
+    const codeIndex = listadoProductos.docs.findIndex(e => e.code === product.code)  
     if (codeIndex !== -1) {
         res.status(400).json({ error: "Codigo ya existente" })
         return
@@ -68,7 +68,7 @@ async function validarProdActualizado(req, res, next) {
     let idProd = req.params.pid
 
     const listadoProductos = await ProductManager.getProducts(req.query)
-    const codeIndex = listadoProductos.findIndex(e => e._id.toString() === idProd)
+    const codeIndex = listadoProductos.docs.findIndex(e => e._id.toString() === idProd)
     if (codeIndex === -1) {
         res.status(400).json({ error: "Producto con ID:" + idProd + " not Found" })
         return
