@@ -6,10 +6,10 @@
     </div>
     <div class="cart-list">
         {{#each cart.products}}
-        <div class="container text-center prod">
+        <div class="container text-center">
             <div class="row">
                 <div class="col">
-                    <img src="{{this._id.thumbnail}}" class="img-fluid float-start rounded-start" alt={{this._id.title}} />
+                    <img src="{{this._id.thumbnail}}" class="img-fluid float-start rounded-start img-product" alt={{this._id.title}} />
                 </div>
                 <div class="col-6">
                     <h5 class="card-title">{{this._id.title}}</h5>
