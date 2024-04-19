@@ -33,7 +33,7 @@ class ProductManager {
             let filteredProducts = await ProductModel.find()
 
             if (JSON.stringify(filters) === '{}') {  // vienen vacios los filtros            
-                filteredProducts = await ProductModel.paginate({}, { lean: true })
+                filteredProducts = await ProductModel.paginate({}, { limit: filteredProducts.length })
                 return filteredProducts
             }
 
@@ -47,13 +47,19 @@ class ProductManager {
             }
            
             if (!page) page = 1
-            const { limit, category, availability, sort } = { limit: 10, page: page, category: 'notebook', availability: 1, sort: 'asc', ...filters }
+            const { limit, category, availability, sort } = { limit: 10, page: page, availability: 1, sort: 'asc', ...filters }
          
             if (availability == 1) {
-                filteredProducts = await ProductModel.paginate({ category: category, stock: { $gt: 0 } }, { limit: limit, page: page, sort: { price: sort }, lean: true })
+                if (category)
+                    filteredProducts = await ProductModel.paginate({ category: category, stock: { $gt: 0 } }, { limit: limit, page: page, sort: { price: sort }, lean: true })
+                else
+                    filteredProducts = await ProductModel.paginate({ stock: { $gt: 0 } }, { limit: limit, page: page, sort: { price: sort }, lean: true })
             }
             else {
-                filteredProducts = await ProductModel.paginate({ category: category, stock: 0 }, { limit: limit, page: page, sort: { price: sort }, lean: true })
+                if (category)
+                    filteredProducts = await ProductModel.paginate({ category: category, stock: 0 }, { limit: limit, page: page, sort: { price: sort }, lean: true })
+                else
+                    filteredProducts = await ProductModel.paginate({ stock: 0 }, { limit: limit, page: page, sort: { price: sort }, lean: true })
             }
 
             return filteredProducts
