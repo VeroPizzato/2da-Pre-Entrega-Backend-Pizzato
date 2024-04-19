@@ -33,7 +33,7 @@ router.get('/products/detail/:pid', async (req, res) => {
             product
         }
 
-        res.render('detail', data)
+        res.render('detailProduct', data)
     }
     catch (err) {
         return res.status(500).json({ message: err.message })
@@ -46,9 +46,29 @@ router.get('/products/addCart/:pid', async (req, res) => {
         const prodId = req.params.pid        
         //agrego una unidad del producto al primer carrito que siempre existe
         const carts = await CartManager.getCarts()
-        // console.log(JSON.stringify(carts, null, '\t'))     
-        await CartManager.addProductToCart(carts[0]._id, prodId, 1); 
-        res.redirect(`/products/detail/${prodId}`)  
+        // console.log(JSON.stringify(carts, null, '\t'))    
+        await CartManager.addProductToCart(carts[0]._id.toString(), prodId, 1); 
+        //res.redirect(`/products/detail/${prodId}`)  
+    }
+    catch (err) {
+        return res.status(500).json({ message: err.message })
+    }
+})
+
+router.get('/carts/:cid', async (req, res) => {
+    try {
+        const CartManager = req.app.get('CartManager')
+        const cartId = req.params.cid
+        const cart = await CartManager.getCartByCId(cartId)             
+
+        let data = {
+            title: 'Cart Detail',          
+            styles: ['productos.css'],
+            useWS: false,
+            cart
+        }
+        
+        res.render('detailCart', data)        
     }
     catch (err) {
         return res.status(500).json({ message: err.message })
